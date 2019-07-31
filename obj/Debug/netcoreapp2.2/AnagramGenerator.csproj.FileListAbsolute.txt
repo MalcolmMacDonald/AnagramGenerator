@@ -1,0 +1,11 @@
+C:\Users\Admin\Documents\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.deps.json
+C:\Users\Admin\Documents\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.runtimeconfig.json
+C:\Users\Admin\Documents\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.runtimeconfig.dev.json
+c:\Users\Admin\Documents\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.dll
+c:\Users\Admin\Documents\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.pdb
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.csprojAssemblyReference.cache
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.csproj.CoreCompileInputs.cache
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.AssemblyInfoInputs.cache
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.AssemblyInfo.cs
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.dll
+c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.pdb
