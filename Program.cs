@@ -11,31 +11,66 @@ namespace AnagramGenerator
     {
         static void Main(string[] args)
         {
+            //SortEnglishWords();
             TrieBranch mainTrie = new TrieBranch();
-
+            Console.WriteLine("Creating Trie");
             string[] englishWords = GetEnglishWords();
             for (int i = 0; i < englishWords.Length; i++)
             {
                 mainTrie.AddWord(englishWords[i]);
             }
 
-
+            Console.WriteLine("Trie Created");
             while (true)
             {
                 string inputText = Console.ReadLine();
                 inputText = inputText.Replace(" ", string.Empty).ToLower();
 
-                Console.WriteLine("In Trie: " + mainTrie.ContainsWord(inputText).ToString() + " In Text: " + englishWords.Contains(inputText));
+                string[] variationsOfWord = FindWordsInTrieBranch(mainTrie, inputText);
+
+                Console.WriteLine("Variations of " + inputText + " found: ");
+                for (int i = 0; i < variationsOfWord.Length; i++)
+                {
+                    int variationLength = variationsOfWord[i].Length;
+                    string[] variationsFoundOfVariations = FindWordsInTrieBranch(mainTrie, inputText.Substring(variationLength, inputText.Length - variationLength));
+
+                    if (variationsFoundOfVariations.Length > 0)
+                    {
+                        for (int j = 0; j < variationsFoundOfVariations.Length; j++)
+                        {
+                            Console.WriteLine(variationsOfWord[i] + " " + variationsFoundOfVariations[j]);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(variationsOfWord[i]);
+                    }
+                }
             }
-
-            // inputText = new string(inputText.OrderBy(s => (int)s).ToArray());
-
-
-
         }
         static string[] GetEnglishWords()
         {
             return File.ReadAllLines("EnglishWords.txt");
+        }
+        static void SortEnglishWords()
+        {
+            string[] unsortedWords = File.ReadAllLines("EnglishWords.txt");
+            unsortedWords = unsortedWords.OrderBy(s => s.Length).ToArray();
+            File.WriteAllLines("EnglishWords.txt", unsortedWords);
+        }
+
+        static string[] FindWordsInTrieBranch(TrieBranch branch, string input)
+        {
+            List<string> foundWords = new List<string>();
+            for (int i = 0; i < input.Length; i++)
+            {
+                string wordToCheck = input.Substring(0, input.Length - i);
+                if (branch.ContainsWord(wordToCheck))
+                {
+                    foundWords.Add(wordToCheck);
+                }
+            }
+            return foundWords.ToArray();
         }
     }
 
