@@ -4,47 +4,55 @@ using System.Collections.Generic;
 using System.Web;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 namespace AnagramGenerator
 {
     class Program
     {
         static void Main(string[] args)
         {
-
-            Trie mainTrie = new Trie();
+            TrieBranch mainTrie = new TrieBranch();
 
             string[] englishWords = GetEnglishWords();
             for (int i = 0; i < englishWords.Length; i++)
             {
-                mainTrie.AddWord(englishWords[i]);
+                mainTrie.AddWord(mainTrie, englishWords[i]);
             }
 
 
-            while (true)
-            {
-                string inputText = Console.ReadLine();
-                inputText = inputText.Replace(" ", string.Empty).ToLower();
+            /*   while (true)
+              {
+                  string inputText = Console.ReadLine();
+                  inputText = inputText.Replace(" ", string.Empty).ToLower();
 
-                Console.WriteLine(mainTrie.ContainsWord(inputText).ToString());
-            }
+                  Console.WriteLine("In Trie: " + mainTrie.ContainsWord(inputText).ToString());
+              }*/
 
             // inputText = new string(inputText.OrderBy(s => (int)s).ToArray());
 
+            Stopwatch trieStopwatch = new Stopwatch();
+            trieStopwatch.Start();
 
+            for (int i = 0; i < englishWords.Length; i++)
+            {
+                mainTrie.ContainsWord(englishWords[i]);
+            }
 
+            trieStopwatch.Stop();
 
+            Console.WriteLine("Trie Seconds: " + trieStopwatch.Elapsed.Milliseconds);
 
-            // Console.WriteLine(inputText);
+            Stopwatch linqStopwatch = new Stopwatch();
 
+            linqStopwatch.Start();
+            for (int i = 0; i < englishWords.Length; i++)
+            {
+                englishWords.Contains(englishWords[i]);
+            }
+            linqStopwatch.Stop();
+            Console.WriteLine("Linq Seconds: " + linqStopwatch.Elapsed.Milliseconds);
 
-
-
-
-
-            //    List<string> inputPermutations = new List<string>();
-
-
-
+            Console.ReadKey();
 
         }
         static string[] GetEnglishWords()
@@ -56,43 +64,13 @@ namespace AnagramGenerator
     }
 
 
-    class Trie
-    {
-        TrieBranch rootBranch = new TrieBranch();
 
-        public void AddWord(string word)
-        {
-
-            string tempWord = word;
-            TrieBranch thisBranch = rootBranch;
-
-            while (tempWord.Length > 0)
-            {
-
-                char currentChar = tempWord[0];
-                tempWord = tempWord.Remove(0, 1);
-
-                if (thisBranch.ContainsChar(currentChar))
-                {
-                    thisBranch = thisBranch.childBranches[currentChar];
-                }
-                else
-                {
-                    thisBranch = thisBranch.AddBranch(currentChar);
-                }
-            }
-        }
-        public bool ContainsWord(string word)
-        {
-            return rootBranch.ContainsWord(word);
-        }
-    }
 
     class TrieBranch
     {
         char thisChar;
         public Dictionary<char, TrieBranch> childBranches = new Dictionary<char, TrieBranch>();
-
+        public bool endsWord;
 
         public TrieBranch(char _thisChar = ' ')
         {
@@ -113,7 +91,7 @@ namespace AnagramGenerator
         {
             if (word.Length < 1)
             {
-                return true;
+                return endsWord;
             }
 
             char firstLetter = word[0];
@@ -128,6 +106,29 @@ namespace AnagramGenerator
             {
                 return childBranches[firstLetter].ContainsWord(tempWord);
             }
+        }
+        public void AddWord(TrieBranch branch, string word)
+        {
+
+            string tempWord = word;
+
+            while (tempWord.Length > 0)
+            {
+
+                char currentChar = tempWord[0];
+                tempWord = tempWord.Remove(0, 1);
+
+                if (branch.ContainsChar(currentChar))
+                {
+                    branch = branch.childBranches[currentChar];
+                }
+                else
+                {
+                    branch = branch.AddBranch(currentChar);
+                    branch.AddWord(branch, tempWord);
+                }
+            }
+            branch.endsWord = true;
         }
     }
 
