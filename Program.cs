@@ -16,54 +16,28 @@ namespace AnagramGenerator
             string[] englishWords = GetEnglishWords();
             for (int i = 0; i < englishWords.Length; i++)
             {
-                mainTrie.AddWord(mainTrie, englishWords[i]);
+                mainTrie.AddWord(englishWords[i]);
             }
 
 
-            /*   while (true)
-              {
-                  string inputText = Console.ReadLine();
-                  inputText = inputText.Replace(" ", string.Empty).ToLower();
+            while (true)
+            {
+                string inputText = Console.ReadLine();
+                inputText = inputText.Replace(" ", string.Empty).ToLower();
 
-                  Console.WriteLine("In Trie: " + mainTrie.ContainsWord(inputText).ToString());
-              }*/
+                Console.WriteLine("In Trie: " + mainTrie.ContainsWord(inputText).ToString() + " In Text: " + englishWords.Contains(inputText));
+            }
 
             // inputText = new string(inputText.OrderBy(s => (int)s).ToArray());
 
-            Stopwatch trieStopwatch = new Stopwatch();
-            trieStopwatch.Start();
 
-            for (int i = 0; i < englishWords.Length; i++)
-            {
-                mainTrie.ContainsWord(englishWords[i]);
-            }
-
-            trieStopwatch.Stop();
-
-            Console.WriteLine("Trie Seconds: " + trieStopwatch.Elapsed.Milliseconds);
-
-            Stopwatch linqStopwatch = new Stopwatch();
-
-            linqStopwatch.Start();
-            for (int i = 0; i < englishWords.Length; i++)
-            {
-                englishWords.Contains(englishWords[i]);
-            }
-            linqStopwatch.Stop();
-            Console.WriteLine("Linq Seconds: " + linqStopwatch.Elapsed.Milliseconds);
-
-            Console.ReadKey();
 
         }
         static string[] GetEnglishWords()
         {
             return File.ReadAllLines("EnglishWords.txt");
         }
-
-
     }
-
-
 
 
     class TrieBranch
@@ -81,6 +55,7 @@ namespace AnagramGenerator
         {
             return childBranches.ContainsKey(input);
         }
+
         public TrieBranch AddBranch(char newChar)
         {
             childBranches.Add(newChar, new TrieBranch(newChar));
@@ -94,42 +69,40 @@ namespace AnagramGenerator
                 return endsWord;
             }
 
-            char firstLetter = word[0];
+            char firstCharacter = word[0];
 
             string tempWord = word.Remove(0, 1);
 
-            if (!childBranches.ContainsKey(firstLetter))
+            if (!ContainsChar(firstCharacter))
             {
                 return false;
             }
             else
             {
-                return childBranches[firstLetter].ContainsWord(tempWord);
+                return childBranches[firstCharacter].ContainsWord(tempWord);
             }
         }
-        public void AddWord(TrieBranch branch, string word)
+
+        public void AddWord(string word)
         {
+            if (word.Length < 1)
+            {
+                endsWord = true;
+                return;
+            }
 
             string tempWord = word;
 
-            while (tempWord.Length > 0)
+            char firstCharacter = tempWord[0];
+            tempWord = tempWord.Remove(0, 1);
+            if (ContainsChar(firstCharacter))
             {
-
-                char currentChar = tempWord[0];
-                tempWord = tempWord.Remove(0, 1);
-
-                if (branch.ContainsChar(currentChar))
-                {
-                    branch = branch.childBranches[currentChar];
-                }
-                else
-                {
-                    branch = branch.AddBranch(currentChar);
-                    branch.AddWord(branch, tempWord);
-                }
+                childBranches[firstCharacter].AddWord(tempWord);
             }
-            branch.endsWord = true;
+            else
+            {
+                AddBranch(firstCharacter).AddWord(tempWord);
+            }
         }
     }
-
 }
