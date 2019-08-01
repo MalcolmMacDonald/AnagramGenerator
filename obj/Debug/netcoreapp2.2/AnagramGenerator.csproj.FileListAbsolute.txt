@@ -9,3 +9,14 @@ c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerat
 c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.AssemblyInfo.cs
 c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.dll
 c:\Users\Admin\Documents\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.pdb
+D:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.deps.json
+D:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.runtimeconfig.json
+D:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.runtimeconfig.dev.json
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.dll
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\bin\Debug\netcoreapp2.2\AnagramGenerator.pdb
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.csprojAssemblyReference.cache
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.csproj.CoreCompileInputs.cache
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.AssemblyInfoInputs.cache
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.AssemblyInfo.cs
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.dll
+d:\Malcolm MacDonald\Documents\C# Projects\AnagramGenerator\obj\Debug\netcoreapp2.2\AnagramGenerator.pdb

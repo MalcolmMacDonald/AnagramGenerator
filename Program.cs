@@ -11,10 +11,6 @@ namespace AnagramGenerator
         static void Main(string[] args)
         {
 
-            /*  string inputText = Console.ReadLine();
-             inputText = inputText.Replace(" ", string.Empty).ToLower();
-             inputText = new string(inputText.OrderBy(s => (int)s).ToArray());*/
-
             Trie mainTrie = new Trie();
 
             string[] englishWords = GetEnglishWords();
@@ -22,6 +18,20 @@ namespace AnagramGenerator
             {
                 mainTrie.AddWord(englishWords[i]);
             }
+
+
+            while (true)
+            {
+                string inputText = Console.ReadLine();
+                inputText = inputText.Replace(" ", string.Empty).ToLower();
+
+                Console.WriteLine(mainTrie.ContainsWord(inputText).ToString());
+            }
+
+            // inputText = new string(inputText.OrderBy(s => (int)s).ToArray());
+
+
+
 
 
             // Console.WriteLine(inputText);
@@ -72,6 +82,10 @@ namespace AnagramGenerator
                 }
             }
         }
+        public bool ContainsWord(string word)
+        {
+            return rootBranch.ContainsWord(word);
+        }
     }
 
     class TrieBranch
@@ -93,6 +107,27 @@ namespace AnagramGenerator
         {
             childBranches.Add(newChar, new TrieBranch(newChar));
             return childBranches[newChar];
+        }
+
+        public bool ContainsWord(string word)
+        {
+            if (word.Length < 1)
+            {
+                return true;
+            }
+
+            char firstLetter = word[0];
+
+            string tempWord = word.Remove(0, 1);
+
+            if (!childBranches.ContainsKey(firstLetter))
+            {
+                return false;
+            }
+            else
+            {
+                return childBranches[firstLetter].ContainsWord(tempWord);
+            }
         }
     }
 
