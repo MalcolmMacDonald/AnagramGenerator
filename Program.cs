@@ -5,6 +5,9 @@ using System.Web;
 using System.IO;
 using System.Linq;
 using System.Diagnostics;
+
+
+
 namespace AnagramGenerator
 {
     class Program
@@ -26,31 +29,51 @@ namespace AnagramGenerator
                 string inputText = Console.ReadLine();
                 inputText = inputText.Replace(" ", string.Empty).ToLower();
 
-                string[] variationsOfWord = FindWordsInTrieBranch(mainTrie, inputText);
+                Stopwatch anagramFindingStopwatch = new Stopwatch();
+                anagramFindingStopwatch.Start();
+                List<string> foundAnagrams = new List<string>();
 
-                Console.WriteLine("Variations of " + inputText + " found: ");
-                for (int i = 0; i < variationsOfWord.Length; i++)
+
+                foreach (char[] permutation in inputText.GetPermutations())
                 {
-                    int variationLength = variationsOfWord[i].Length;
-                    string[] variationsFoundOfVariations = FindWordsInTrieBranch(mainTrie, inputText.Substring(variationLength, inputText.Length - variationLength));
-
-                    if (variationsFoundOfVariations.Length > 0)
+                    string permutationText = new string(permutation);
+                    string[] foundSubWords = FindWordsInTrieBranch(mainTrie, permutationText);
+                    foundSubWords = foundSubWords.Except(foundAnagrams).ToArray();
+                    for (int j = 0; j < foundSubWords.Length; j++)
                     {
-                        for (int j = 0; j < variationsFoundOfVariations.Length; j++)
-                        {
-                            Console.WriteLine(variationsOfWord[i] + " " + variationsFoundOfVariations[j]);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(variationsOfWord[i]);
+                        foundAnagrams.Add(foundSubWords[j]);
+                        Console.WriteLine(foundSubWords[j]);
                     }
                 }
+
+                anagramFindingStopwatch.Stop();
+                int minutesElapsed = anagramFindingStopwatch.Elapsed.Minutes;
+                Console.WriteLine("Found {0} anagrams in {1} minutes!", foundAnagrams.Count, minutesElapsed);
+
+
+                /* List<string> inputPermutations = PermuteString(inputText);
+
+                for (int i = 0; i < inputPermutations.Count; i++)
+                {
+                    string thisPerumatation = inputPermutations[i];
+                    inputPermutations.RemoveAll(s => s == thisPerumatation);
+                    inputPermutations.Insert(i, thisPerumatation);
+                }
+
+
+                for (int i = 0; i < inputPermutations.Count; i++)
+                {*/
+
+                // Console.WriteLine("Variations of " + inputText + " found: ");
+
+                //}
+
+
             }
         }
         static string[] GetEnglishWords()
         {
-            return File.ReadAllLines("EnglishWords.txt");
+            return File.ReadAllLines("EnglishWords.txt").Where(s => s.Length > 3).ToArray();
         }
         static void SortEnglishWords()
         {
@@ -59,17 +82,59 @@ namespace AnagramGenerator
             File.WriteAllLines("EnglishWords.txt", unsortedWords);
         }
 
+        static List<string> PermuteString(string input)
+        {
+            List<string> foundPermutations = new List<string>();
+
+            if (input.Length == 1)
+            {
+                foundPermutations.Add(input);
+                return foundPermutations;
+            }
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                char selectedCharacter = input[i];
+                string restOfInput = input.Substring(0, i) + input.Substring(i + 1, input.Length - (i + 1));
+
+                List<string> childPermutations = PermuteString(restOfInput);
+                for (int j = 0; j < childPermutations.Count; j++)
+                {
+                    foundPermutations.Add(selectedCharacter + childPermutations[j]);
+                }
+            }
+
+            return foundPermutations;
+        }
+
+
         static string[] FindWordsInTrieBranch(TrieBranch branch, string input)
         {
+
             List<string> foundWords = new List<string>();
+            List<string> wordEndings = new List<string>();
             for (int i = 0; i < input.Length; i++)
             {
                 string wordToCheck = input.Substring(0, input.Length - i);
                 if (branch.ContainsWord(wordToCheck))
                 {
                     foundWords.Add(wordToCheck);
+
+                    string newWordEnding = input.Substring(wordToCheck.Length, input.Length - wordToCheck.Length);
+                    wordEndings.Add(newWordEnding);
                 }
             }
+            List<string> returnedWords = new List<string>();
+            for (int i = 0; i < foundWords.Count; i++)
+            {
+                string[] wordEndingsSubWords = FindWordsInTrieBranch(branch, wordEndings[i]);
+                for (int j = 0; j < wordEndingsSubWords.Length; j++)
+                {
+                    returnedWords.Add(foundWords[i] + " " + wordEndingsSubWords[j]);
+                }
+            }
+            foundWords = foundWords.Concat(returnedWords).ToList();
+            foundWords = foundWords.Where(s => s.Replace(" ", "").Length == input.Length).ToList();
             return foundWords.ToArray();
         }
     }

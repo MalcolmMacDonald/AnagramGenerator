@@ -1,28 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\Documents\\AnagramGenerator\\AnagramGenerator.csproj": {}
+    "D:\\Malcolm MacDonald\\Documents\\C# Projects\\AnagramGenerator\\AnagramGenerator.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\Documents\\AnagramGenerator\\AnagramGenerator.csproj": {
+    "D:\\Malcolm MacDonald\\Documents\\C# Projects\\AnagramGenerator\\AnagramGenerator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Documents\\AnagramGenerator\\AnagramGenerator.csproj",
+        "projectUniqueName": "D:\\Malcolm MacDonald\\Documents\\C# Projects\\AnagramGenerator\\AnagramGenerator.csproj",
         "projectName": "AnagramGenerator",
-        "projectPath": "C:\\Users\\Admin\\Documents\\AnagramGenerator\\AnagramGenerator.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\Documents\\AnagramGenerator\\obj\\",
+        "projectPath": "D:\\Malcolm MacDonald\\Documents\\C# Projects\\AnagramGenerator\\AnagramGenerator.csproj",
+        "packagesPath": "C:\\Users\\Malcolm MacDonald\\.nuget\\packages\\",
+        "outputPath": "D:\\Malcolm MacDonald\\Documents\\C# Projects\\AnagramGenerator\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Malcolm MacDonald\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
