@@ -33,40 +33,28 @@ namespace AnagramGenerator
                 anagramFindingStopwatch.Start();
                 List<string> foundAnagrams = new List<string>();
 
+                foundAnagrams.AddRange(mainTrie.GetPossibleWordsFromCharacters(inputText, ""));
 
-                foreach (char[] permutation in inputText.GetPermutations())
+
+                foundAnagrams = foundAnagrams.Where(s => RemoveCharactersFromString(inputText, s).Length == 0 || mainTrie.GetPossibleWordsFromCharacters(RemoveCharactersFromString(inputText, s), "").Count > 0).ToList();
+
+                for (int i = 0; i < foundAnagrams.Count; i++)
                 {
-                    string permutationText = new string(permutation);
-                    string[] foundSubWords = FindWordsInTrieBranch(mainTrie, permutationText);
-                    foundSubWords = foundSubWords.Except(foundAnagrams).ToArray();
-                    for (int j = 0; j < foundSubWords.Length; j++)
+                    Console.WriteLine(foundAnagrams[i]);
+
+                    List<string> childWords = mainTrie.GetPossibleWordsFromCharacters(RemoveCharactersFromString(inputText, foundAnagrams[i]), "");
+
+
+
+                    for (int j = 0; j < childWords.Count; j++)
                     {
-                        foundAnagrams.Add(foundSubWords[j]);
-                        Console.WriteLine(foundSubWords[j]);
+                        Console.WriteLine("    " + childWords[j]);
                     }
                 }
 
                 anagramFindingStopwatch.Stop();
                 int minutesElapsed = anagramFindingStopwatch.Elapsed.Minutes;
                 Console.WriteLine("Found {0} anagrams in {1} minutes!", foundAnagrams.Count, minutesElapsed);
-
-
-                /* List<string> inputPermutations = PermuteString(inputText);
-
-                for (int i = 0; i < inputPermutations.Count; i++)
-                {
-                    string thisPerumatation = inputPermutations[i];
-                    inputPermutations.RemoveAll(s => s == thisPerumatation);
-                    inputPermutations.Insert(i, thisPerumatation);
-                }
-
-
-                for (int i = 0; i < inputPermutations.Count; i++)
-                {*/
-
-                // Console.WriteLine("Variations of " + inputText + " found: ");
-
-                //}
 
 
             }
@@ -81,61 +69,14 @@ namespace AnagramGenerator
             unsortedWords = unsortedWords.OrderBy(s => s.Length).ToArray();
             File.WriteAllLines("EnglishWords.txt", unsortedWords);
         }
-
-        static List<string> PermuteString(string input)
+        static string RemoveCharactersFromString(string inputString, string charactersToRemove)
         {
-            List<string> foundPermutations = new List<string>();
-
-            if (input.Length == 1)
+            string inputCopy = inputString;
+            for (int j = 0; j < charactersToRemove.Length; j++)
             {
-                foundPermutations.Add(input);
-                return foundPermutations;
+                inputCopy = inputCopy.Remove(inputCopy.IndexOf(charactersToRemove[j]), 1);
             }
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                char selectedCharacter = input[i];
-                string restOfInput = input.Substring(0, i) + input.Substring(i + 1, input.Length - (i + 1));
-
-                List<string> childPermutations = PermuteString(restOfInput);
-                for (int j = 0; j < childPermutations.Count; j++)
-                {
-                    foundPermutations.Add(selectedCharacter + childPermutations[j]);
-                }
-            }
-
-            return foundPermutations;
-        }
-
-
-        static string[] FindWordsInTrieBranch(TrieBranch branch, string input)
-        {
-
-            List<string> foundWords = new List<string>();
-            List<string> wordEndings = new List<string>();
-            for (int i = 0; i < input.Length; i++)
-            {
-                string wordToCheck = input.Substring(0, input.Length - i);
-                if (branch.ContainsWord(wordToCheck))
-                {
-                    foundWords.Add(wordToCheck);
-
-                    string newWordEnding = input.Substring(wordToCheck.Length, input.Length - wordToCheck.Length);
-                    wordEndings.Add(newWordEnding);
-                }
-            }
-            List<string> returnedWords = new List<string>();
-            for (int i = 0; i < foundWords.Count; i++)
-            {
-                string[] wordEndingsSubWords = FindWordsInTrieBranch(branch, wordEndings[i]);
-                for (int j = 0; j < wordEndingsSubWords.Length; j++)
-                {
-                    returnedWords.Add(foundWords[i] + " " + wordEndingsSubWords[j]);
-                }
-            }
-            foundWords = foundWords.Concat(returnedWords).ToList();
-            foundWords = foundWords.Where(s => s.Replace(" ", "").Length == input.Length).ToList();
-            return foundWords.ToArray();
+            return inputCopy;
         }
     }
 
@@ -203,6 +144,35 @@ namespace AnagramGenerator
             {
                 AddBranch(firstCharacter).AddWord(tempWord);
             }
+        }
+
+        public List<string> GetPossibleWordsFromCharacters(string availableCharacters, string currentWord)
+        {
+            List<string> foundWords = new List<string>();
+
+            if (endsWord)
+            {
+                foundWords.Add(currentWord);
+            }
+            string distinctCharacters = new string(availableCharacters.Distinct().ToArray());
+            for (int i = 0; i < distinctCharacters.Length; i++)
+            {
+                char selectedCharacter = distinctCharacters[i];
+                int indexOfFirstCharacter = availableCharacters.IndexOf(selectedCharacter);
+                string restOfInput = availableCharacters.Substring(0, indexOfFirstCharacter) + availableCharacters.Substring(indexOfFirstCharacter + 1, availableCharacters.Length - (indexOfFirstCharacter + 1));
+                string currentWordPrime = currentWord + selectedCharacter;
+
+
+
+                if (ContainsChar(selectedCharacter))
+                {
+                    TrieBranch branchToCheck = childBranches[selectedCharacter];
+                    foundWords.AddRange(branchToCheck.GetPossibleWordsFromCharacters(restOfInput, currentWordPrime));
+                }
+
+            }
+
+            return foundWords;
         }
     }
 }
