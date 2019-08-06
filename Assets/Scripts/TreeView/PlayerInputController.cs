@@ -7,9 +7,9 @@ public class PlayerInputController : MonoBehaviour
 {
     TreeNode initialNode;
     TreeCamera thisCamera;
+    public static PlayerInputController instance;
 
 
-    public TreeGenerator thisTreeGenerator;
     public GameObject inputTextPrefab;
 
     bool inputingText
@@ -19,18 +19,30 @@ public class PlayerInputController : MonoBehaviour
             return initialNode == thisCamera.activeNode;
         }
     }
-    // Start is called before the first frame update
+
+    public string rootText;
     void Start()
     {
+        instance = this;
         thisCamera = GetComponent<TreeCamera>();
 
         initialNode = thisCamera.activeNode;
 
         TMP_InputField inputField = Instantiate(inputTextPrefab, initialNode.transform.position, initialNode.transform.rotation, initialNode.transform).GetComponent<TMP_InputField>();
-        inputField.onValueChanged.AddListener((newText) =>
+        inputField.onEndEdit.AddListener((newText) =>
         {
-            initialNode.SetChildStrings(thisTreeGenerator.GetChildWordsFromString(newText));
+            rootText = newText;
+            string[] childStrings = TreeGenerator.instance.GetChildWordsFromString(rootText);
+            string[] remainingLetters = TreeGenerator.instance.GetRemainingLetters(rootText, childStrings);
+            initialNode.RemoveChildren();
+            initialNode.SetChildStrings(childStrings, remainingLetters);
         });
+    }
+    public void AddChildNodes(TreeNode thisNode)
+    {
+        string[] childStrings = TreeGenerator.instance.GetChildWordsFromString(thisNode.remainingLetters);
+        string[] remainingLetters = TreeGenerator.instance.GetRemainingLetters(thisNode.remainingLetters, childStrings);
+        thisNode.SetChildStrings(childStrings, remainingLetters);
     }
 
 }

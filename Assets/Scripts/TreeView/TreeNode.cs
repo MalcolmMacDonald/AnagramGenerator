@@ -23,6 +23,8 @@ public class TreeNode : MonoBehaviour
 
     Rigidbody2D rb;
     TMP_Text thisText;
+    public string currentText;
+    public string remainingLetters;
     void Awake()
     {
         childNodes = new List<TreeNode>();
@@ -131,17 +133,30 @@ public class TreeNode : MonoBehaviour
     }
     public void RemoveChild(int index)
     {
+        childNodes[index].RemoveChildren();
         Destroy(childNodes[index].gameObject);
         childNodes.RemoveAt(index);
         Destroy(lineRenderers[0].gameObject);
         lineRenderers.RemoveAt(index);
     }
-
-    public void SetText(string newText)
+    public void RemoveChildren()
     {
-        thisText.text = newText;
+        while (childNodes.Count > 0)
+        {
+            RemoveChild(0);
+        }
     }
-    public void SetChildStrings(string[] childStrings)
+
+    public void SetText(string _newText, string _remainingLetters)
+    {
+        currentText = _newText;
+        remainingLetters = _remainingLetters;
+        thisText.text = currentText;
+        thisText.color = remainingLetters.Length > 0 ? Color.white : Color.green;
+
+
+    }
+    public void SetChildStrings(string[] childStrings, string[] remainingLetters)
     {
         while (childNodes.Count != childStrings.Length)
         {
@@ -156,7 +171,7 @@ public class TreeNode : MonoBehaviour
         }
         for (int i = 0; i < childStrings.Length; i++)
         {
-            childNodes[i].SetText(childStrings[i]);
+            childNodes[i].SetText(childStrings[i], remainingLetters[i]);
         }
     }
 }

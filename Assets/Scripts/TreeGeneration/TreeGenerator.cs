@@ -5,50 +5,43 @@ using System.IO;
 using System.Linq;
 public class TreeGenerator : MonoBehaviour
 {
-    TrieBranch mainTrie = new TrieBranch();
-
+    public static TreeGenerator instance;
+    public TrieBranch mainTrie = new TrieBranch();
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        //SortEnglishWords();
+        instance = this;
         print("Creating Trie");
         string[] englishWords = GetEnglishWords();
         for (int i = 0; i < englishWords.Length; i++)
         {
             mainTrie.AddWord(englishWords[i]);
         }
-
-
-
-
     }
 
 
     public string[] GetChildWordsFromString(string inputText)
     {
-        inputText = inputText.Replace(" ", string.Empty).ToLower();
         List<string> foundAnagrams = new List<string>();
-
+        inputText = inputText.Replace(" ", string.Empty).ToLower();
         foundAnagrams.AddRange(mainTrie.GetPossibleWordsFromCharacters(inputText, ""));
 
-
-        foundAnagrams = foundAnagrams.Where(s => RemoveCharactersFromString(inputText, s).Length == 0 || mainTrie.GetPossibleWordsFromCharacters(RemoveCharactersFromString(inputText, s), "").Count > 0).ToList();
         foundAnagrams.Remove(inputText);
-        List<string> childWords = new List<string>();
-        childWords.AddRange(foundAnagrams);
-        for (int i = 0; i < foundAnagrams.Count; i++)
-        {
-            print(foundAnagrams[i]);
 
-            //   childWords.AddRange(mainTrie.GetPossibleWordsFromCharacters(RemoveCharactersFromString(inputText, foundAnagrams[i]), ""));
-        }
-        return childWords.ToArray();
+
+        foundAnagrams = foundAnagrams.Where(s => WordHasViableChildren(inputText, s)).ToList();
+
+        return foundAnagrams.ToArray();
+    }
+    public string[] GetRemainingLetters(string rootWord, string[] childWords)
+    {
+        return childWords.Select(s => RemoveCharactersFromString(rootWord, s)).ToArray();
     }
 
 
     static string[] GetEnglishWords()
     {
-        return File.ReadAllLines("Assets/Data/EnglishWords.txt").Where(s => s.Length > 3).ToArray();
+        return File.ReadAllLines("Assets/Data/EnglishWords.txt");//.Where(s => s.Length > 3).ToArray();
     }
     static void SortEnglishWords()
     {
@@ -56,7 +49,24 @@ public class TreeGenerator : MonoBehaviour
         unsortedWords = unsortedWords.OrderBy(s => s.Length).ToArray();
         File.WriteAllLines("EnglishWords.txt", unsortedWords);
     }
-    static string RemoveCharactersFromString(string inputString, string charactersToRemove)
+    public bool WordIsEndOfSentence(string word)
+    {
+        // return mainTrie.GetPossibleWordsFromCharacters(word, "").Any(s => GetChildWordsFromString(RemoveCharactersFromString(word, s)).Length > 0);
+        return true;
+    }
+    bool WordHasViableChildren(string rootWord, string childWord)
+    {
+        string excessLetters = RemoveCharactersFromString(rootWord, childWord);
+
+        List<string> childWords = mainTrie.GetPossibleWordsFromCharacters(excessLetters, "");
+
+        if (excessLetters.Length == 0)
+        {
+            return true;
+        }
+        return childWords.Any(s => WordHasViableChildren(rootWord, childWord + s));
+    }
+    public static string RemoveCharactersFromString(string inputString, string charactersToRemove)
     {
         string inputCopy = inputString;
         for (int j = 0; j < charactersToRemove.Length; j++)
@@ -65,4 +75,6 @@ public class TreeGenerator : MonoBehaviour
         }
         return inputCopy;
     }
+
+
 }

@@ -18,12 +18,15 @@ public class TreeCamera : MonoBehaviour
     float currentSizeChangeRate;
 
     public float wordFocusPointPadding;
+
+    PlayerInputController thisInputController;
     // Start is called before the first frame update
     void Awake()
     {
         thisBounds = new Bounds();
         thisCamera = GetComponent<Camera>();
         currentCanvas = FindObjectOfType<Canvas>();
+        thisInputController = FindObjectOfType<PlayerInputController>();
         rb = GetComponent<Rigidbody2D>();
         activeNode = NearestNode(Vector2.zero);
     }
@@ -31,14 +34,22 @@ public class TreeCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 mouseWorldPosition = thisCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPosition.z = currentCanvas.transform.position.z;
 
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mouseWorldPosition = thisCamera.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPosition.z = currentCanvas.transform.position.z;
 
             activeNode = NearestNode(mouseWorldPosition);
 
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            TreeNode selectedNode = NearestNode(mouseWorldPosition);
+            if (selectedNode.parentNode != null)
+            {
+                thisInputController.AddChildNodes(selectedNode);
+            }
         }
 
         GetNodeChildBounds();
